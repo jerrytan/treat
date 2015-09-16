@@ -21,7 +21,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/treat_customer_name"
-                android:textSize="20sp"
                 android:layout_marginLeft="5dp"/>
         </LinearLayout>
         <LinearLayout
@@ -36,7 +35,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/customer_sex"
-                android:textSize="20sp"
                 android:layout_marginLeft="5dp"/>
         </LinearLayout>
         <LinearLayout
@@ -72,7 +70,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/customer_age"
-                android:textSize="20sp"
                 android:layout_marginLeft="5dp"/>
         </LinearLayout>
         <LinearLayout
@@ -88,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/customer_phone"
-                android:textSize="20sp"/>
+                />
 
         </LinearLayout>
         <LinearLayout

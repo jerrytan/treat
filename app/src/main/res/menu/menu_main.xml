@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.tan.dnatreatment.activity.MainActivity">
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_PrinterConfig" android:title="@string/action_printer_config"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_FetchBarcodeHistory" android:title="获取barcode历史信息"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

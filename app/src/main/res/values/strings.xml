@@ -1,0 +1,105 @@
+<resources>
+    <string name="app_name">柯顿</string>
+    <string name="title_activity_main">柯顿治疗管理系统</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">设置</string>
+
+    <string name="must_input">必填项</string>
+    <!-- main activity -->
+    <string name="main_manage_customer">管理客户档案</string>
+    <string name="main_manage_treatment">管理客户疗程</string>
+    <string name="main_generate_barcode">打印条码</string>
+    <string name="main_save_blood">血样入库</string>
+    <string name="main_treatment">第N次治疗</string>
+    <string name="main_setting">设置</string>
+    <string name="about_company">关于公司</string>
+    <string name="main_get_drug">取药</string>
+    <string name="login">员工登录</string>
+    <string name="logout">退出登录</string>
+
+    <string name="title_activity_manage_treatment">治疗资料管理</string>
+    <string name="title_activity_add_treatment">新增治疗信息</string>
+    <string name="title_activity_generate_barcode">生成条码</string>
+
+
+
+    <!-- add customer activity -->
+    <string name="title_activity_manage_customer">客户资料管理</string>
+    <string name="title_activity_add_customer">编辑客户信息</string>
+    <string name="add_customer">新建客户信息</string>
+    <string name="input_customer_info">请在表格中填写客户信息</string>
+    <string name="customer_name">客户名字：</string>
+    <string name="customer_age">客户年龄：</string>
+    <string name="customer_sex">客户性别：</string>
+    <string name="customer_phone">客户电话：</string>
+    <string name="customer_address">客户地址：</string>
+    <string name="customer_comment">备注信息：</string>
+    <string name="upload_customer_info">保存客户信息</string>
+
+    <!-- treatment list activity -->
+    <string name="treat_customer_name">客户姓名：</string>
+    <string name="treat_customer_phone">客户电话：</string>
+    <string name="treat_employee_name">员工姓名：</string>
+    <string name="treat_employee_phone">员工电话：</string>
+    <string name="treat_start_date">疗程开始：</string>
+    <string name="treat_end_date">疗程结束：</string>
+
+    <!-- add treatment actitivity-->
+    <string name="add_treatment">新增疗程信息</string>
+    <string name="input_treatment_info">请在下面输入疗程信息</string>
+    <string name="add_treatment_start_date">疗程开始时间：</string>
+    <string name="add_treatment_end_date">疗程结束时间：</string>
+    <string name="upload_treatment_info">保存疗程信息</string>
+
+    <!-- Strings related to login -->
+    <string name="title_activity_login">员工登录</string>
+    <string name="prompt_login">请输入员工您的姓名和手机号登录</string>
+    <string name="prompt_email">员工姓名</string>
+    <string name="prompt_phone">员工手机号</string>
+    <string name="prompt_passwd">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="error_invalid_name">名字不合法，请再检查下</string>
+    <string name="error_invalid_phone">手机号格式不对，请输入数字</string>
+    <string name="employee_password">abcd1234</string>
+    <string name="error_incorrect_password">密码不对</string>
+    <string name="error_field_required">姓名和手机号必填</string>
+
+
+
+    <!-- for barcode scanner-->
+    <string name="action_printer_config">条码打印机配置</string>
+    <string name="placeHolder">placeHolder</string>
+    <string name="seekbar_add">+</string>
+    <string name="seekbar_minus">-</string>
+    <string name="create">生成</string>
+    <string name="scan_failed">扫描失败</string>
+    <string name="bottom_hint">建议与镜头保持10CM距离，尽量避免逆光和阴影</string>
+    <string name="top_hint">将条形码置于取景框内会自动扫描</string>
+    <string name="cancel">取消</string>
+    <string name="msg_camera_framework_bug">抱歉，Android相机出现问题。您可能需要重启设备。</string>
+    <string name="button_ok">确定</string>
+
+    <!-- for gprint -->
+    <string name="printer_connect_setting">配置打印机连接</string>
+    <string name="print_test_page">打印测试页</string>
+    <string name="printer_info">获取打印机信息</string>
+    <string name="printer_connect_status">获取打印机连接状态</string>
+    <string name="printer_command_status">获取打印机当前命令</string>
+    <string name="barcode_info">条形码信息如下</string>
+    <string name="print_copy">打印份数：</string>
+    <string name="print">打印</string>
+    <string name="print_hint">共打印14份条形码，\n前7份由客户保留，\n后7份由员工保留。</string>
+
+    <!-- for login -->
+    <string name="welcome_login">欢迎您，美好的一天从登录开始。</string>
+    <string name="welcome_employee">欢迎您回来，美好的一天就此开始。</string>
+
+    <string name="title_activity_employee_profile">员工登录</string>
+    <string name="title_activity_update_barcode">更新条码相关操作信息</string>
+
+    <string name="update_barcode">更新条码操作信息</string>
+    <string name="fetch_barcode_history">获取条码历史信息</string>
+    <string name="title_activity_fetch_barcode_history">疗程历史信息</string>
+</resources>

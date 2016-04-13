@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Calendar;
 
 public class EditTreatmentActivity extends AppCompatActivity {
@@ -45,6 +46,7 @@ public class EditTreatmentActivity extends AppCompatActivity {
     private int end_month;
     private int end_day;
     private EditText mEndDate;
+    private EditText mHospital;
 
     private MyApplication mApplication;
     private CustomerInfo mCustomerInfo;
@@ -77,34 +79,36 @@ public class EditTreatmentActivity extends AppCompatActivity {
         mEmployeeInfo = mApplication.getEmployeeInfo();
         mTreatmentInfo = mApplication.getTreatmentInfo();
 
+        mHospital = (EditText)findViewById(R.id.treatment_hospital);
+        mStartDate = (EditText)findViewById(R.id.treatment_start_date);
+        mEndDate = (EditText)findViewById(R.id.treatment_end_date);
+
         if (mCustomerInfo != null) {
 
-            TextView customerName = (TextView) findViewById(R.id.add_customer_name);
+            TextView customerName = (TextView) findViewById(R.id.treatment_customer_name);
             customerName.setText(mCustomerInfo.getName());
-            TextView customerAge = (TextView) findViewById(R.id.add_customer_age);
+            TextView customerAge = (TextView) findViewById(R.id.treatment_customer_age);
             customerAge.setText(mCustomerInfo.getAge());
-            TextView customerSex = (TextView) findViewById(R.id.add_customer_sex);
+            TextView customerSex = (TextView) findViewById(R.id.treatment_customer_sex);
             customerSex.setText(mCustomerInfo.getSex());
-            TextView customerPhone = (TextView) findViewById(R.id.add_customer_phone);
+            TextView customerPhone = (TextView) findViewById(R.id.treatment_customer_phone);
             customerPhone.setText(mCustomerInfo.getPhone());
-            TextView customerAddress = (TextView) findViewById(R.id.add_customer_address);
+            TextView customerAddress = (TextView) findViewById(R.id.treatment_customer_address);
             customerAddress.setText(mCustomerInfo.getAddress());
-            TextView customerComment = (TextView) findViewById(R.id.add_customer_comment);
+            TextView customerComment = (TextView) findViewById(R.id.treatment_customer_comment);
             customerComment.setText(mCustomerInfo.getComment());
         }
 
         if (mTreatmentInfo != null) {
-            TextView startDate = (TextView)findViewById(R.id.add_treatment_start_date);
-            startDate.setText(mTreatmentInfo.getStartDate());
-            TextView endDate = (TextView)findViewById(R.id.add_treatment_end_date);
-            endDate.setText(mTreatmentInfo.getEndDate());
+            mStartDate.setText(mTreatmentInfo.getStartDate());
+            mEndDate.setText(mTreatmentInfo.getEndDate());
+            mHospital.setText(mTreatmentInfo.getHospital());
 
         }
 
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-        mStartDate = (EditText)findViewById(R.id.add_treatment_start_date);
         mStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +125,6 @@ public class EditTreatmentActivity extends AppCompatActivity {
             }
         });
 
-        mEndDate = (EditText)findViewById(R.id.add_treatment_end_date);
         mEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,14 +152,13 @@ public class EditTreatmentActivity extends AppCompatActivity {
                 }
                 else {
 
-                    //curl -d "cid=7&eid=55&start=2015-10-10&end=2016-11-10" http://localhost/treat/add_treat.php
-
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             HttpURLConnection connection = null;
                             try {
                                 URL url = new URL(APIConfig.ADD_TREATMENT_INFO_URL);
+                                Log.d("EditTreament",url.toString());
                                 connection = (HttpURLConnection) url.openConnection();
                                 connection.setRequestMethod("POST");
                                 connection.setConnectTimeout(5000);
@@ -171,11 +173,13 @@ public class EditTreatmentActivity extends AppCompatActivity {
                                 builder.append(mStartDate.getText().toString());
                                 builder.append("&end=");
                                 builder.append(mEndDate.getText().toString());
+                                builder.append("&hospital=");
+                                builder.append(URLEncoder. encode(mHospital.getText().toString(), "UTF-8"));
                                 if(mTreatmentInfo !=null) {
                                     builder.append("&tid=");
                                     builder.append(mTreatmentInfo.getId());
                                 }
-
+                                Log.d("EditTreament",builder.toString());
                                 out.writeBytes(builder.toString());
 
                                 InputStream in = connection.getInputStream();
@@ -186,14 +190,16 @@ public class EditTreatmentActivity extends AppCompatActivity {
                                     response.append(line);
                                 }
                                 String result = response.toString();
+                                Log.d("EditTreament",result);
 
                                 JSONObject jsonObject = new JSONObject(result);
+
                                 String requestStatus = jsonObject.getString("Status");
                                 String treatMentId = jsonObject.getString("tid");
 
                                 TreatmentInfo treatmentInfo = new TreatmentInfo(treatMentId, mEmployeeInfo.getId(), mEmployeeInfo.getName(), mEmployeeInfo.getPhone(),
                                         mStartDate.getText().toString(), mEndDate.getText().toString(),
-                                        mCustomerInfo.getId(), mCustomerInfo.getName(), mCustomerInfo.getPhone());
+                                        mCustomerInfo.getId(), mCustomerInfo.getName(), mCustomerInfo.getPhone(),mCustomerInfo.getSex(),mHospital.getText().toString());
 
                                 mApplication.setTreatmentInfo(treatmentInfo);
 

@@ -123,7 +123,7 @@ public class ManageTreatmentActivity extends AppCompatActivity {
         });
         initTreatmentByEid();
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 listIndex = position;
@@ -131,11 +131,10 @@ public class ManageTreatmentActivity extends AppCompatActivity {
                 treatmentInfos.remove(position);
                 Toast.makeText(getBaseContext(), mSelectedTreat.getId() + "被删除了",
                         Toast.LENGTH_SHORT).show();
-
                 mTreatmentAdapter.notifyDataSetChanged();
                 return true;
             }
-        });
+        });*/
 
         Button btn_select_treat = (Button)findViewById(R.id.select_treat);
         btn_select_treat.setOnClickListener(new View.OnClickListener() {
@@ -190,7 +189,8 @@ public class ManageTreatmentActivity extends AppCompatActivity {
                             TreatmentInfo treatmentInfo = new TreatmentInfo(jsonObject.getString("treatment.id"),
                                     jsonObject.getString("employee.id"),jsonObject.getString("employee.name"),jsonObject.getString("employee.phone"),
                                     jsonObject.getString("treatment.start_date"),jsonObject.getString("treatment.end_date"),
-                                    jsonObject.getString("customer.id"),jsonObject.getString("customer.name"),jsonObject.getString("customer.phone"));
+                                    jsonObject.getString("customer.id"),jsonObject.getString("customer.name"),jsonObject.getString("customer.phone"),
+                                    jsonObject.getString("customer.sex"),jsonObject.getString("treatment.hospital"));
                             treatmentInfos.add(treatmentInfo);
                         }
                     }

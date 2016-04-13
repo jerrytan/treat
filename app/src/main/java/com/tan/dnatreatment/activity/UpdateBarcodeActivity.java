@@ -91,7 +91,6 @@ public class UpdateBarcodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_update_barcode);
         Intent intent = getIntent();
         mBarcode = intent.getStringExtra("barcode");
-        //String barcode = "000034003601";
         queryBarcodeInfo(mBarcode);
 
         Button btnFetchBarcodeHistory = (Button)findViewById(R.id.fetchBarcodeHistory);
@@ -147,9 +146,6 @@ public class UpdateBarcodeActivity extends AppCompatActivity {
                 }).start();
             }
         });
-
-
-
     }
 
 

@@ -2,10 +2,18 @@ package com.tan.dnatreatment.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,10 +23,22 @@ import android.widget.Toast;
 
 import com.tan.dnatreatment.R;
 import com.tan.dnatreatment.dao.MyApplication;
+import com.tan.dnatreatment.dao.UpdateVersionInfo;
+import com.tan.dnatreatment.util.APIConfig;
+import com.tan.dnatreatment.util.DownLoadManager;
+import com.tan.dnatreatment.util.UpdateInfoParser;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements  View.OnClickListener{
 
+
     private  MyApplication mApplication = null;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,11 +112,12 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         Button btnTreatment  = (Button)findViewById(R.id.main_treatment);
         btnTreatment.setOnClickListener(this);
 
-        Button btnSetting  = (Button)findViewById(R.id.main_setting);
+        Button btnSetting  = (Button)findViewById(R.id.main_printer_setting);
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this,"设置点啥", Toast.LENGTH_SHORT).show();
+                Intent  intent = new Intent(MainActivity.this,com.gprinter.sample.MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -104,21 +125,22 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         btnAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageView imageView = new ImageView(MainActivity.this);
-                imageView.setImageResource(R.drawable.company);
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setIcon(R.drawable.logo);
-                builder.setTitle("关于公司");
-                builder.setView(imageView);
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                Dialog alertDialog = builder.create();
-                alertDialog.show();
-
+//                ImageView imageView = new ImageView(MainActivity.this);
+//                imageView.setImageResource(R.drawable.company);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                builder.setIcon(R.drawable.logo);
+//                builder.setTitle("关于公司");
+//                builder.setView(imageView);
+//                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Dialog alertDialog = builder.create();
+//                alertDialog.show();
+                Intent intent = new Intent(MainActivity.this,AboutActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -169,7 +191,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(MainActivity.this,ManageTreatmentActivity.class);
-                startActivity(intent);                        }
+                startActivity(intent);
+            }
         });
         dialog.show();
     }
@@ -191,16 +214,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if (id == R.id.action_PrinterConfig) {
-            Intent  intent = new Intent(MainActivity.this,com.gprinter.sample.MainActivity.class);
-            startActivity(intent);
-        }
-        else if(id == R.id.action_FetchBarcodeHistory) {
-            Intent fetchIntent = new Intent(getApplicationContext(),FetchBarcodeHistoryActivity.class);
-            String testCode = "0000580093010";
-            fetchIntent.putExtra("barcode",testCode);
-            startActivity(fetchIntent);
         }
 
         return super.onOptionsItemSelected(item);

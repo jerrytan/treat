@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tan.dnatreatment" >
+    package="com.tan.dnatreatment"
+    android:versionCode="1"
+    android:versionName="1.0.0" >
 
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -154,6 +156,10 @@
         <activity
             android:name=".activity.FetchBarcodeHistoryActivity"
             android:label="@string/title_activity_fetch_barcode_history" >
+        </activity>
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/title_activity_about" >
         </activity>
     </application>
 

@@ -37,116 +37,103 @@ public class FetchBarcodeHistoryActivity extends AppCompatActivity {
                     try {
                         JSONObject result = (JSONObject) msg.obj;
                         StringBuilder builder = new StringBuilder();
-                        builder.append("客户姓名：");
+
+                        builder.append("客户：");
                         builder.append(result.getString("customer.name"));
-                        builder.append("\n");
-
-
-                        builder.append("客户电话：");
+                        builder.append(" 电话：");
                         builder.append(result.getString("customer.phone"));
                         builder.append("\n");
+                        builder.append("所在医院：");
+                        builder.append(result.getString("hospital"));
+                        builder.append("\n");
+
 
                         builder.append("疗程开始时间：");
                         builder.append(result.getString("start_date"));
                         builder.append("\n");
-
                         builder.append("疗程结束时间：");
                         builder.append(result.getString("end_date"));
                         builder.append("\n");
 
-                        builder.append("销售姓名：");
-                        builder.append(result.getString("employee.name"));
-                        builder.append("\n");
 
-                        builder.append("销售电话：");
+                        builder.append("销售：");
+                        builder.append(result.getString("employee.name"));
+                        builder.append(" 电话：");
                         builder.append(result.getString("employee.phone"));
                         builder.append("\n\n");
 
-                        builder.append("以下为治疗过程。\n");
+                        builder.append("以下为治疗过程\n");
 
-                        builder.append("血样入库员工：");
+                        builder.append("血样入库：");
                         builder.append(convertNullToString(result.getString("blood_employee")));
-                        builder.append("\n");
-                        builder.append("血样入库时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("blood_receive_time")));
                         builder.append("\n\n");
 
-                        builder.append("第一次取药员工：");
+                        builder.append("第一次取药：");
                         builder.append(convertNullToString(result.getString("drug1_employee")));
-                        builder.append("\n");
-                        builder.append("第一次取药时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("drug1_distribute_time")));
                         builder.append("\n");
-                        builder.append("第一次治疗员工：");
+                        builder.append("第一次治疗：");
                         builder.append(convertNullToString(result.getString("step1_employee")));
-                        builder.append("\n");
-                        builder.append("第一次治疗时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("step1_finish_time")));
                         builder.append("\n\n");
 
 
-                        builder.append("第二次取药员工：");
+                        builder.append("第二次取药：");
                         builder.append(convertNullToString(result.getString("drug2_employee")));
-                        builder.append("\n");
-                        builder.append("第二次取药时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("drug2_distribute_time")));
                         builder.append("\n");
-                        builder.append("第二次治疗员工：");
+                        builder.append("第二次治疗：");
                         builder.append(convertNullToString(result.getString("step2_employee")));
-                        builder.append("\n");
-                        builder.append("第二次治疗时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("step2_finish_time")));
                         builder.append("\n\n");
 
-                        builder.append("第三次取药员工：");
+                        builder.append("第三次取药：");
                         builder.append(convertNullToString(result.getString("drug3_employee")));
-                        builder.append("\n");
-                        builder.append("第三次取药时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("drug3_distribute_time")));
                         builder.append("\n");
-                        builder.append("第三次治疗员工：");
+                        builder.append("第三次治疗：");
                         builder.append(convertNullToString(result.getString("step3_employee")));
-                        builder.append("\n");
-                        builder.append("第三次治疗时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("step3_finish_time")));
                         builder.append("\n\n");
 
-                        builder.append("第四次取药员工：");
+                        builder.append("第四次取药：");
                         builder.append(convertNullToString(result.getString("drug4_employee")));
-                        builder.append("\n");
-                        builder.append("第四次取药时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("drug4_distribute_time")));
                         builder.append("\n");
-                        builder.append("第四次治疗员工：");
+                        builder.append("第四次治疗：");
                         builder.append(convertNullToString(result.getString("step4_employee")));
-                        builder.append("\n");
-                        builder.append("第四次治疗时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("step4_finish_time")));
                         builder.append("\n\n");
 
-                        builder.append("第五次取药员工：");
+                        builder.append("第五次取药：");
                         builder.append(convertNullToString(result.getString("drug5_employee")));
-                        builder.append("\n");
-                        builder.append("第五次取药时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("drug5_distribute_time")));
                         builder.append("\n");
-                        builder.append("第五次治疗员工：");
+                        builder.append("第五次治疗：");
                         builder.append(convertNullToString(result.getString("step5_employee")));
-                        builder.append("\n");
-                        builder.append("第五次治疗时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("step5_finish_time")));
                         builder.append("\n\n");
 
-                        builder.append("第六次取药员工：");
+                        builder.append("第六次取药：");
                         builder.append(convertNullToString(result.getString("drug6_employee")));
-                        builder.append("\n");
-                        builder.append("第六次取药时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("drug6_distribute_time")));
                         builder.append("\n");
-                        builder.append("第六次治疗员工：");
+                        builder.append("第六次治疗：");
                         builder.append(convertNullToString(result.getString("step6_employee")));
-                        builder.append("\n");
-                        builder.append("第六次治疗时间：");
+                        builder.append("  时间：");
                         builder.append(convertNullToString(result.getString("step6_finish_time")));
                         builder.append("\n");
 
@@ -172,7 +159,6 @@ public class FetchBarcodeHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_barcode_history);
-        //mBarcode = "000055009101";
         mBarcode = getIntent().getStringExtra("barcode");
         mTreatmentId = getIntent().getStringExtra("tid");
 

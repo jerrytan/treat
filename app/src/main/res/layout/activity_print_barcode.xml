@@ -50,6 +50,14 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btOpenDialogue"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:onClick="openPortDialogueClicked"
+        android:text="@string/printer_connect" />
+    <Button
         android:id="@+id/btPrint"
         android:layout_width="300dp"
         android:layout_marginTop="10dp"
@@ -63,14 +71,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <Button
-            android:id="@+id/btOpenDialogue"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:onClick="openPortDialogueClicked"
-            android:text="@string/printer_connect_setting" />
+
         <Button
             android:id="@+id/btPrintTestPage"
             android:layout_width="300dp"
@@ -78,6 +79,7 @@
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:text="@string/print_test_page"
+            android:visibility="gone"
             android:onClick="printTestPageClicked"
             />
         <TextView

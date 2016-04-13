@@ -69,14 +69,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/radioMale"
-                        android:text="male"
+                        android:text="男"
                         android:checked="true">
                     </RadioButton>
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/radioFemale"
-                        android:text="female">
+                        android:text="女">
                     </RadioButton>
                 </RadioGroup>
             </LinearLayout>

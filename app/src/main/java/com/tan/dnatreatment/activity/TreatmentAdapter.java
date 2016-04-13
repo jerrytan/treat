@@ -33,14 +33,17 @@ public class TreatmentAdapter extends ArrayAdapter<TreatmentInfo> {
         customerPhone.setText(treatmentInfo.getCustomerPhone());
 
         TextView emplyeeName  = (TextView) view.findViewById(R.id.treat_employee_name);
-        emplyeeName.setText(treatmentInfo.getEmployee_name());
+        emplyeeName.setText(treatmentInfo.getEmployeeName());
         TextView employeePhone  = (TextView) view.findViewById(R.id.treat_employee_phone);
-        employeePhone.setText(treatmentInfo.getEmployee_phone());
+        employeePhone.setText(treatmentInfo.getEmployeePhone());
 
         TextView treatStart  = (TextView) view.findViewById(R.id.treat_start_date);
         treatStart.setText(treatmentInfo.getStartDate());
         TextView treatEnd  = (TextView) view.findViewById(R.id.treat_end_date);
         treatEnd.setText(treatmentInfo.getEndDate());
+
+        TextView treatHospital  = (TextView) view.findViewById(R.id.treat_hospital);
+        treatHospital.setText(treatmentInfo.getHospital());
 
         return view;
     }

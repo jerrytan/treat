@@ -9,6 +9,9 @@ public class APIConfig {
 
     public static final String  REGISTER_EMPLOYEE_URL= "http://115.29.38.239/treat/register.php";
 
+    public static final String  EMPLOYEE_LOGIN_URL= "http://115.29.38.239/treat/login.php";
+
+
     public static final String  ADD_CUSTOMER_INFO_URL = "http://115.29.38.239/treat/add_customer.php";
 
     public static final String  QUERY_CUSTOMER_INFO_URL = "http://115.29.38.239/treat/query_customer.php";
@@ -27,5 +30,6 @@ public class APIConfig {
 
     public static final int  MAX_PRINTER_CNT = 1;
 
+    public static  final String CHECK_VERSION_URL = "http://115.29.38.239/treat/version.xml";
 
 }

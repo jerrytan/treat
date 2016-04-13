@@ -94,12 +94,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        if (!employee_password.equals(getString(R.string.employee_password))) {
-            mPasswdView.setError(getString(R.string.error_incorrect_password));
-            focusView = mPasswdView;
-            cancel = true;
-        }
-        else {
+
             if (TextUtils.isEmpty(employee_name) ) {
                 mNameView.setError(getString(R.string.error_field_required));
                 focusView = mNameView;
@@ -115,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 focusView = mPhoneView;
                 cancel = true;
             }
-        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -124,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(employee_name, employee_phone);
+            mAuthTask = new UserLoginTask(employee_name, employee_phone,employee_password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -208,10 +203,12 @@ public class LoginActivity extends AppCompatActivity {
 
         private final String mName;
         private final String mPhone;
+        private final String mPassword;
 
-        UserLoginTask(String name, String phone) {
+        UserLoginTask(String name, String phone,String passwd) {
             mName = name;
             mPhone = phone;
+            mPassword = passwd;
         }
 
         @Override
@@ -220,14 +217,15 @@ public class LoginActivity extends AppCompatActivity {
             HttpURLConnection connection = null;
 
             try {
-                URL url = new URL(APIConfig.REGISTER_EMPLOYEE_URL);
+                URL url = new URL(APIConfig.EMPLOYEE_LOGIN_URL);
                 connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setConnectTimeout(5000);
                 connection.setReadTimeout(5000);
                 DataOutputStream out = new DataOutputStream(connection.getOutputStream());
 
-                String writeParams ="name="+URLEncoder.encode(mName,"UTF-8")+"&phone="+mPhone;
+                String writeParams ="name="+URLEncoder.encode(mName,"UTF-8")+
+                        "&phone="+mPhone+"&passwd="+mPassword;
                 out.writeBytes(writeParams);
                 //out.writeUTF(writeParams);
                 InputStream in = connection.getInputStream();
@@ -242,16 +240,16 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(result);
                 String requestStatus = jsonObject.getString("Status");
                 String employeeId = jsonObject.getString("eid");
-                Log.d("Employee Register","status is " + requestStatus);
                 Log.d("Employee Register", "id is " + employeeId);
                 if (requestStatus.equals("OK")) {
                     EmployeeInfo employeeInfo = new EmployeeInfo(employeeId,mName,mPhone);
                     MyApplication myApplication = (MyApplication)getApplication();
                     myApplication.setEmployeeInfo(employeeInfo);
                 }
+                else {
+                    return false;
+                }
 
-                // Simulate network access.
-                Thread.sleep(100);
             } catch (Exception e) {
                 return false;
             }finally {
@@ -276,8 +274,8 @@ public class LoginActivity extends AppCompatActivity {
                 setResult(RESULT_OK, null);
                 finish();
             } else {
-                mPhoneView.setError(getString(R.string.error_incorrect_password));
-                mPhoneView.requestFocus();
+                mNameView.setError(getString(R.string.error_incorrect_password));
+                mNameView.requestFocus();
             }
         }
 

@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,7 +17,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,25 +57,25 @@ import java.util.Vector;
 
 public class PrintBarcodeActivity extends Activity {
 
-	private GpService mGpService= null;
+	private GpService mGpService = null;
 	public static final String CONNECT_STATUS = "connect.status";
 	private static final String DEBUG_TAG = "PrintBarcodeActivity";
-	public static final int GET_BARCODE =1;
+	public static final int GET_BARCODE = 1;
 
 	private PrinterServiceConnection conn = null;
-    private  int mPrinterIndex = 0;
+	private int mPrinterIndex = 0;
 
-    private MyApplication mApplication ;
-    private TreatmentInfo mTreatmentInfo ;
+	private MyApplication mApplication;
+	private TreatmentInfo mTreatmentInfo;
 	private TreatmentBarcode mBarcode;
-    private Button btnPrint;
+	private Button btnPrint;
 
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case GET_BARCODE:
-					TextView txDisplayInfo = (TextView)findViewById(R.id.barcode_info);
+					TextView txDisplayInfo = (TextView) findViewById(R.id.barcode_info);
 					txDisplayInfo.setText(getDisplayString());
 					break;
 				default:
@@ -90,39 +90,41 @@ public class PrintBarcodeActivity extends Activity {
 			Log.i("ServiceConnection", "onServiceDisconnected() called");
 			mGpService = null;
 		}
+
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i("ServiceConnection", "onServiceConnected() called");
-            mGpService =GpService.Stub.asInterface(service);
-		} 
+			Log.i("ServiceConnection", "onServiceConnected() called");
+			mGpService = GpService.Stub.asInterface(service);
+		}
 	}
 
-    @Override
+	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
 		Log.e(DEBUG_TAG, "onResume");
 	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_print_barcode);
 		Log.e(DEBUG_TAG, "onCreate");
 
-        mApplication = (MyApplication)getApplication();
-        mTreatmentInfo = mApplication.getTreatmentInfo();
+		mApplication = (MyApplication) getApplication();
+		mTreatmentInfo = mApplication.getTreatmentInfo();
 
 		getBarcode(mTreatmentInfo.getId());
 		connection();
 
-        btnPrint = (Button)findViewById(R.id.btPrint);
-        btnPrint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                printerClicked();
-            }
-        });
-        btnPrint.requestFocus();
+		btnPrint = (Button) findViewById(R.id.btPrint);
+		btnPrint.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				printerClicked();
+			}
+		});
+		btnPrint.requestFocus();
 
 	}
 
@@ -153,13 +155,13 @@ public class PrintBarcodeActivity extends Activity {
 					JSONObject jsonBarcode = jsonObject.getJSONObject("barcode");
 
 					mBarcode = new TreatmentBarcode(
-							id,jsonBarcode.getString("Customer"),
-							jsonBarcode.getString("Step1"),jsonBarcode.getString("Step2"),jsonBarcode.getString("Step3"),
-							jsonBarcode.getString("Step4"),jsonBarcode.getString("Step5"),jsonBarcode.getString("Step6"),
+							id, jsonBarcode.getString("Customer"),
+							jsonBarcode.getString("Step1"), jsonBarcode.getString("Step2"), jsonBarcode.getString("Step3"),
+							jsonBarcode.getString("Step4"), jsonBarcode.getString("Step5"), jsonBarcode.getString("Step6"),
 							jsonBarcode.getString("Blood"),
-							jsonBarcode.getString("Drug1"),jsonBarcode.getString("Drug2"),jsonBarcode.getString("Drug3"),
-							jsonBarcode.getString("Drug4"),jsonBarcode.getString("Drug5"),jsonBarcode.getString("Drug6")
-							);
+							jsonBarcode.getString("Drug1"), jsonBarcode.getString("Drug2"), jsonBarcode.getString("Drug3"),
+							jsonBarcode.getString("Drug4"), jsonBarcode.getString("Drug5"), jsonBarcode.getString("Drug6")
+					);
 					mApplication.setBarcode(mBarcode);
 
 					Log.d("Get Barcode ", "status is " + requestStatus);
@@ -191,35 +193,36 @@ public class PrintBarcodeActivity extends Activity {
 			state[i] = false;
 		}
 		for (int i = 0; i < APIConfig.MAX_PRINTER_CNT; i++) {
-				try {
-					if (mGpService .getPrinterConnectStatus(i) == GpDevice.STATE_CONNECTED) {
-						state[i] = true;
-					}
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			try {
+				if (mGpService.getPrinterConnectStatus(i) == GpDevice.STATE_CONNECTED) {
+					state[i] = true;
 				}
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return state;
 	}
 
 	public void openPortDialogueClicked(View view) {
-				Log.d(DEBUG_TAG, "openPortConfigurationDialog ");
-				Intent intent = new Intent(this,
-						PrinterConnectDialog.class);
-				boolean[] state = getConnectState();
-				intent.putExtra(CONNECT_STATUS, state);	
-				this.startActivity(intent);
+		Log.d(DEBUG_TAG, "openPortConfigurationDialog ");
+		Intent intent = new Intent(this,
+				PrinterConnectDialog.class);
+		boolean[] state = getConnectState();
+		intent.putExtra(CONNECT_STATUS, state);
+		this.startActivity(intent);
 	}
+
 	public void printTestPageClicked(View view) {
 		try {
 			int rel = mGpService.printeTestPage(mPrinterIndex); //
 			Log.i("ServiceConnection", "rel " + rel);
-			GpCom.ERROR_CODE r=GpCom.ERROR_CODE.values()[rel];
-			if(r != GpCom.ERROR_CODE.SUCCESS){
-				Toast.makeText(getApplicationContext(),GpCom.getErrorText(r),
-						Toast.LENGTH_SHORT).show();	
-		    }
+			GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
+			if (r != GpCom.ERROR_CODE.SUCCESS) {
+				Toast.makeText(getApplicationContext(), GpCom.getErrorText(r),
+						Toast.LENGTH_SHORT).show();
+			}
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -227,164 +230,194 @@ public class PrintBarcodeActivity extends Activity {
 	}
 
 
-
-    public void printBarcodeInTSCMode(){
-
-        TscCommand tsc = new TscCommand();
-        tsc.addSize(40, 30);    //设置标签尺寸，按照实际尺寸设置
-        tsc.addGap(2);           //设置标签间隙，按照实际尺寸设置，如果为无间隙纸则设置为0
-        tsc.addReference(0, 0);//设置原点坐标
-        tsc.addUserCommand("SET TEAR ON\r\n");
-        tsc.addCls();// 清除打印缓冲区
+	public void printBarcodeInTSCMode() {
 
 
-//        Bitmap b = BitmapFactory.decodeResource(getResources(),
-//                R.drawable.appicon);
-//        tsc.addBitmap(20, 20, BITMAP_MODE.OVERWRITE, b.getWidth(), b);
-        //绘制简体中文
-        tsc.addText(20, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0, FONTMUL.MUL_1, FONTMUL.MUL_1, "以下为客户保存");
-
-        tsc.addText(20, 70, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0, FONTMUL.MUL_1, FONTMUL.MUL_1, gereratePrinteString());
-
-        tsc.add1DBarcode(20, 250, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getCustomerBarCode());
-
-        tsc.add1DBarcode(20, 250, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getDrug1Barcode());
-
-        tsc.addPrint(1, 1); // 打印标签
-
-        Vector<Byte> datas = tsc.getCommand(); //发送数据
-        Byte[] Bytes = datas.toArray(new Byte[datas.size()]);
-        byte[] bytes = ArrayUtils.toPrimitive(Bytes);
-        String str = Base64.encodeToString(bytes, Base64.DEFAULT);
-        int rel;
-        try {
-            rel = mGpService.sendTscCommand(mPrinterIndex, str);
-            GpCom.ERROR_CODE r=GpCom.ERROR_CODE.values()[rel];
-            if(r != GpCom.ERROR_CODE.SUCCESS){
-                Toast.makeText(getApplicationContext(),GpCom.getErrorText(r),
-                        Toast.LENGTH_SHORT).show();
-            }
-        } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-	public void printBarcodeInESCMode(){
-
-		EscCommand esc = new EscCommand();
-		esc.addPrintAndFeedLines((byte) 3);
-		esc.addSelectJustification(JUSTIFICATION.CENTER);//设置打印居中
-		esc.addText("以下为客户保存\n");   //  打印文字
-		esc.addPrintAndLineFeed();
-
-		/*打印文字*/
-		esc.addSelectPrintModes(FONT.FONTA, ENABLE.OFF, ENABLE.OFF, ENABLE.OFF, ENABLE.OFF);//取消倍高倍宽
-
-        esc.addText(gereratePrinteString());   //  打印文字
-        esc.addPrintAndFeedPaper((byte) 60);
-
-        esc.addText("客户条码\n");
-        esc.addSelectPrintingPositionForHRICharacters(HRI_POSITION.BELOW);//设置条码可识别字符位置在条码下方
-		esc.addSetBarcodeHeight((byte) 60); //设置条码高度为60点
-		esc.addEAN13(getCustomerBarCode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-
-        esc.addText("第一次治疗条码\n");
-        esc.addEAN13(getStep1Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第二次治疗条码\n");
-        esc.addEAN13(getStep2Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第三次治疗条码\n");
-        esc.addEAN13(getStep3Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第四次治疗条码\n");
-        esc.addEAN13(getStep4Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第五次治疗条码\n");
-        esc.addEAN13(getStep5Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第六次治疗条码\n");
-        esc.addEAN13(getStep6Barcode());
-        esc.addPrintAndFeedPaper((byte) 50);
-
-        esc.addText("以下为员工保存\n");
-        esc.addPrintAndLineFeed();
-        esc.addPrintAndFeedPaper((byte) 50);
-
-        esc.addText("血样条码\n");
-        esc.addEAN13(getBloodBarcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第一次药的条码\n");
-        esc.addEAN13(getDrug1Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第二次药的条码\n");
-        esc.addEAN13(getDrug2Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第三次药的条码\n");
-        esc.addEAN13(getDrug3Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第四次药的条码\n");
-        esc.addEAN13(getDrug4Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第五次药的条码\n");
-        esc.addEAN13(getDrug5Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-
-        esc.addText("第六次药的条码\n");
-        esc.addEAN13(getDrug6Barcode());
-        esc.addPrintAndFeedPaper((byte) 100);
-		
-		Vector<Byte> datas = esc.getCommand(); //发送数据
-		Byte[] Bytes = datas.toArray(new Byte[datas.size()]);
-		byte[] bytes = ArrayUtils.toPrimitive(Bytes);
-		String str = Base64.encodeToString(bytes, Base64.DEFAULT);
-		int rel;
-		try {
-			rel = mGpService.sendEscCommand(mPrinterIndex, str);
-			GpCom.ERROR_CODE r=GpCom.ERROR_CODE.values()[rel];
-			if(r != GpCom.ERROR_CODE.SUCCESS){
-				Toast.makeText(getApplicationContext(),GpCom.getErrorText(r),
-						Toast.LENGTH_SHORT).show();	
-		          }			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void sendLabel(){
 		TscCommand tsc = new TscCommand();
-		tsc.addSize(60, 60); //设置标签尺寸，按照实际尺寸设置
+		tsc.addSize(40, 30);    //设置标签尺寸，按照实际尺寸设置
 		tsc.addGap(2);           //设置标签间隙，按照实际尺寸设置，如果为无间隙纸则设置为0
-    	tsc.addDirection(DIRECTION.BACKWARD,MIRROR.NORMAL);//设置打印方向
-    	tsc.addReference(0, 0);//设置原点坐标
-    // 	tsc.addTear(ENABLE.ON); //撕纸模式开启
-     	tsc.addUserCommand("SET TEAR ON\r\n");
-    	tsc.addCls();// 清除打印缓冲区
-    	//绘制简体中文
-     	tsc.addText(20,20,FONTTYPE.SIMPLIFIED_CHINESE,ROTATION.ROTATION_0,FONTMUL.MUL_1,FONTMUL.MUL_1,"Welcome to use Gprinter!");
-     	//绘制图片
-		Bitmap b = BitmapFactory.decodeResource(getResources(),
-				R.drawable.gprinter);
-		tsc.addBitmap(20,50, BITMAP_MODE.OVERWRITE, b.getWidth(),b);
-		
-		tsc.addQRCode(250, 80, EEC.LEVEL_L,5,ROTATION.ROTATION_0, " www.gprinter.com.cn");	
-     	//绘制一维条码
-     	tsc.add1DBarcode(20,250, BARCODETYPE.CODE128, 100, READABEL.EANBEL, ROTATION.ROTATION_0, "Gprinter");
-    	tsc.addPrint(1,1); // 打印标签
-    	tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+		tsc.addDirection(DIRECTION.FORWARD, MIRROR.NORMAL);
+		tsc.addReference(0, 0);//设置原点坐标
+		tsc.addUserCommand("SET TEAR ON\r\n");
+		tsc.addTear(ENABLE.ON); //撕纸模式开启
+
+		SharedPreferences prefs = getSharedPreferences("", 0);
+		Boolean printerBeep = prefs.getBoolean("printerbeep",false);
+
+		//title
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, "安徽柯顿生物科技");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+                        mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.addText(5, 80, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getStartDate() + " " +
+                        mTreatmentInfo.getEndDate());
+        tsc.addText(5, 110, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "销售姓名：" +mTreatmentInfo.getEmployeeName());
+		tsc.addText(5, 140, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, "销售电话：" + mTreatmentInfo.getEmployeePhone());
+		tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //客户条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "客户条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getCustomerBarCode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第一次治疗条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第一次治疗条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getStep1Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第二次治疗条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第二次治疗条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getStep2Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第三次治疗条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第三次治疗条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getStep3Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第四次治疗条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第四次治疗条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getStep4Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第五次治疗条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第五次治疗条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getStep5Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第六次治疗条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第六次治疗条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getStep6Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //以下为员工保存
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, "以下为员工保存");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "血样条码");
+		tsc.addText(5, 80, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 110, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getBloodBarcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第一次取药条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第一次取药条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getDrug1Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第二次取药条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第二次取药条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getDrug2Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第三次取药条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第三次取药条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getDrug3Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第四次取药条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第四次取药条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getDrug4Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第五次取药条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第五次取药条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+				FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+						mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getDrug5Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+        //第六次取药条码
+        tsc.addCls();// 清除打印缓冲区
+        tsc.addText(5, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, "第六次取药条码");
+        tsc.addText(5, 50, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0,
+                FONTMUL.MUL_1, FONTMUL.MUL_1, mTreatmentInfo.getCustomerName() + " " +
+                        mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital());
+        tsc.add1DBarcode(5, 80, BARCODETYPE.EAN13, 100, READABEL.EANBEL, ROTATION.ROTATION_0, getDrug6Barcode());
+        tsc.addPrint(1, 1); // 打印标签
+		if (printerBeep) tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+
+
 		Vector<Byte> datas = tsc.getCommand(); //发送数据
 		Byte[] Bytes = datas.toArray(new Byte[datas.size()]);
 		byte[] bytes = ArrayUtils.toPrimitive(Bytes);
@@ -392,41 +425,183 @@ public class PrintBarcodeActivity extends Activity {
 		int rel;
 		try {
 			rel = mGpService.sendTscCommand(mPrinterIndex, str);
-			GpCom.ERROR_CODE r=GpCom.ERROR_CODE.values()[rel];
-			if(r != GpCom.ERROR_CODE.SUCCESS){
-				Toast.makeText(getApplicationContext(),GpCom.getErrorText(r),
-						Toast.LENGTH_SHORT).show();	
-		          }			
+			GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
+			if (r != GpCom.ERROR_CODE.SUCCESS) {
+				Toast.makeText(getApplicationContext(), GpCom.getErrorText(r),
+						Toast.LENGTH_SHORT).show();
+			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}	
+	}
+
+	public void printBarcodeInESCMode() {
+
+		EscCommand esc = new EscCommand();
+		esc.addPrintAndFeedLines((byte) 3);
+		esc.addSelectJustification(JUSTIFICATION.CENTER);//设置打印居中
+		esc.addText("安徽柯顿生物科技有限公司\n");   //  打印文字
+		esc.addPrintAndLineFeed();
+
+		/*打印文字*/
+		esc.addSelectPrintModes(FONT.FONTA, ENABLE.OFF, ENABLE.OFF, ENABLE.OFF, ENABLE.OFF);//取消倍高倍宽
+
+		esc.addText(getTreatmentInfo());   //  打印文字
+		esc.addPrintAndFeedPaper((byte) 60);
+
+		esc.addText("客户条码\n");
+		esc.addSelectPrintingPositionForHRICharacters(HRI_POSITION.BELOW);//设置条码可识别字符位置在条码下方
+		esc.addSetBarcodeHeight((byte) 60); //设置条码高度为60点
+		esc.addEAN13(getCustomerBarCode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+
+		esc.addText("第一次治疗条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getStep1Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第二次治疗条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getStep2Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第三次治疗条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getStep3Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第四次治疗条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getStep4Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第五次治疗条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getStep5Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第六次治疗条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getStep6Barcode());
+		esc.addPrintAndFeedPaper((byte) 50);
+
+		esc.addText("以下为员工保存\n");
+		esc.addPrintAndLineFeed();
+		esc.addPrintAndFeedPaper((byte) 50);
+
+		esc.addText("血样条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getBloodBarcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第一次药的条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getDrug1Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第二次药的条码\n");
+		esc.addEAN13(getDrug2Barcode());
+        esc.addText(getBarcodeTitle());
+        esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第三次药的条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getDrug3Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第四次药的条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getDrug4Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第五次药的条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getDrug5Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		esc.addText("第六次药的条码\n");
+        esc.addText(getBarcodeTitle());
+        esc.addEAN13(getDrug6Barcode());
+		esc.addPrintAndFeedPaper((byte) 100);
+
+		Vector<Byte> datas = esc.getCommand(); //发送数据
+		Byte[] Bytes = datas.toArray(new Byte[datas.size()]);
+		byte[] bytes = ArrayUtils.toPrimitive(Bytes);
+		String str = Base64.encodeToString(bytes, Base64.DEFAULT);
+		int rel;
+		try {
+			rel = mGpService.sendEscCommand(mPrinterIndex, str);
+			GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
+			if (r != GpCom.ERROR_CODE.SUCCESS) {
+				Toast.makeText(getApplicationContext(), GpCom.getErrorText(r),
+						Toast.LENGTH_SHORT).show();
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void sendLabel() {
+		TscCommand tsc = new TscCommand();
+		tsc.addSize(60, 60); //设置标签尺寸，按照实际尺寸设置
+		tsc.addGap(2);           //设置标签间隙，按照实际尺寸设置，如果为无间隙纸则设置为0
+		tsc.addDirection(DIRECTION.BACKWARD, MIRROR.NORMAL);//设置打印方向
+		tsc.addReference(0, 0);//设置原点坐标
+		// 	tsc.addTear(ENABLE.ON); //撕纸模式开启
+		tsc.addUserCommand("SET TEAR ON\r\n");
+		tsc.addCls();// 清除打印缓冲区
+		//绘制简体中文
+		tsc.addText(20, 20, FONTTYPE.SIMPLIFIED_CHINESE, ROTATION.ROTATION_0, FONTMUL.MUL_1, FONTMUL.MUL_1, "Welcome to use Gprinter!");
+		//绘制图片
+		Bitmap b = BitmapFactory.decodeResource(getResources(),
+				R.drawable.gprinter);
+		tsc.addBitmap(20, 50, BITMAP_MODE.OVERWRITE, b.getWidth(), b);
+
+		tsc.addQRCode(250, 80, EEC.LEVEL_L, 5, ROTATION.ROTATION_0, " www.gprinter.com.cn");
+		//绘制一维条码
+		tsc.add1DBarcode(20, 250, BARCODETYPE.CODE128, 100, READABEL.EANBEL, ROTATION.ROTATION_0, "Gprinter");
+		tsc.addPrint(1, 1); // 打印标签
+		tsc.addSound(2, 100); //打印标签后 蜂鸣器响
+		Vector<Byte> datas = tsc.getCommand(); //发送数据
+		Byte[] Bytes = datas.toArray(new Byte[datas.size()]);
+		byte[] bytes = ArrayUtils.toPrimitive(Bytes);
+		String str = Base64.encodeToString(bytes, Base64.DEFAULT);
+		int rel;
+		try {
+			rel = mGpService.sendTscCommand(mPrinterIndex, str);
+			GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
+			if (r != GpCom.ERROR_CODE.SUCCESS) {
+				Toast.makeText(getApplicationContext(), GpCom.getErrorText(r),
+						Toast.LENGTH_SHORT).show();
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 
 	public void printerClicked() {
 		try {
 			int type = mGpService.getPrinterCommandType(mPrinterIndex);
-            int status = mGpService.queryPrinterStatus(mPrinterIndex,500);
-            if (status == GpCom.STATE_NO_ERR) {
-                printBarcodeInESCMode();
-
-//                if (type == GpCom.ESC_COMMAND) {
-//                    printBarcodeInESCMode();
-//                } else if (type == GpCom.TSC_COMMAND) {
-//                    printBarcodeInTSCMode();
-//                }
-            }
-            else{
-                Toast.makeText(getApplicationContext(),"打印机错误！", Toast.LENGTH_SHORT).show();
-            }
-		}
-		catch (RemoteException e) {
+			int status = mGpService.queryPrinterStatus(mPrinterIndex, 500);
+			if (status == GpCom.STATE_NO_ERR) {
+				if (type == GpCom.ESC_COMMAND) {
+					printBarcodeInESCMode();
+				} else if (type == GpCom.TSC_COMMAND) {
+					printBarcodeInTSCMode();
+				}
+			} else {
+				Toast.makeText(getApplicationContext(), "打印机错误！", Toast.LENGTH_SHORT).show();
+			}
+		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 	}
-	
 
 
 	@Override
@@ -437,65 +612,94 @@ public class PrintBarcodeActivity extends Activity {
 			unbindService(conn); // unBindService
 		}
 	}
-    // TODO: 2015/8/27
-    //will be moved to util lib later
-    private String gereratePrinteString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("客户姓名：");buffer.append(mTreatmentInfo.getCustomerName());buffer.append("\n");
-        buffer.append("客户电话：");buffer.append(mTreatmentInfo.getCustomerPhone());buffer.append("\n");
-        buffer.append("开始时间：");buffer.append(mTreatmentInfo.getStartDate());buffer.append("\n");
-        buffer.append("结束时间：");buffer.append(mTreatmentInfo.getEndDate());buffer.append("\n");
-        return buffer.toString();
-    }
-    private String getCustomerBarCode() {
-        return mBarcode.getCustomerBarcode();
-    }
-    private String getStep1Barcode() {
-        return mBarcode.getStep1Barcode();
-    }
+
+	// TODO: 2015/8/27
+	//will be moved to util lib later
+	private String getTreatmentInfo() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("客户姓名：");
+		buffer.append(mTreatmentInfo.getCustomerName());
+		buffer.append("\n");
+		buffer.append("客户电话：");
+		buffer.append(mTreatmentInfo.getCustomerPhone());
+		buffer.append("\n");
+		buffer.append("开始时间：");
+		buffer.append(mTreatmentInfo.getStartDate());
+		buffer.append("\n");
+		buffer.append("结束时间：");
+		buffer.append(mTreatmentInfo.getEndDate());
+		buffer.append("\n");
+		buffer.append("所在医院：");
+		buffer.append(mTreatmentInfo.getHospital());
+		buffer.append("\n");
+		return buffer.toString();
+	}
+
+	private String getCustomerBarCode() {
+		return mBarcode.getCustomerBarcode();
+	}
+
+	private String getStep1Barcode() {
+		return mBarcode.getStep1Barcode();
+	}
+
 	private String getStep2Barcode() {
 		return mBarcode.getStep2Barcode();
 	}
+
 	private String getStep3Barcode() {
 		return mBarcode.getStep3Barcode();
 	}
-    private String getStep4Barcode() {
-        return mBarcode.getStep4Barcode();
-    }
-    private String getStep5Barcode() {
-        return mBarcode.getStep5Barcode();
-    }
-    private String getStep6Barcode() {
-        return mBarcode.getStep6Barcode();
-    }
-    private String getBloodBarcode() {
-        return mBarcode.getBloodBarcode();
-    }
-    private String getDrug1Barcode() {
-        return mBarcode.getDrug1Barcode();
-    }
-    private String getDrug2Barcode() {
-        return mBarcode.getDrug2Barcode();
-    }
-    private String getDrug3Barcode() {
-        return mBarcode.getDrug3Barcode();
-    }
-    private String getDrug4Barcode() {
-        return mBarcode.getDrug4Barcode();
-    }
-    private String getDrug5Barcode() {
-        return mBarcode.getDrug5Barcode();
-    }
-    private String getDrug6Barcode() {
-        return mBarcode.getDrug6Barcode();
-    }
+
+	private String getStep4Barcode() {
+		return mBarcode.getStep4Barcode();
+	}
+
+	private String getStep5Barcode() {
+		return mBarcode.getStep5Barcode();
+	}
+
+	private String getStep6Barcode() {
+		return mBarcode.getStep6Barcode();
+	}
+
+	private String getBloodBarcode() {
+		return mBarcode.getBloodBarcode();
+	}
+
+	private String getDrug1Barcode() {
+		return mBarcode.getDrug1Barcode();
+	}
+
+	private String getDrug2Barcode() {
+		return mBarcode.getDrug2Barcode();
+	}
+
+	private String getDrug3Barcode() {
+		return mBarcode.getDrug3Barcode();
+	}
+
+	private String getDrug4Barcode() {
+		return mBarcode.getDrug4Barcode();
+	}
+
+	private String getDrug5Barcode() {
+		return mBarcode.getDrug5Barcode();
+	}
+
+	private String getDrug6Barcode() {
+		return mBarcode.getDrug6Barcode();
+	}
 
 	private String getDisplayString() {
-        String res = gereratePrinteString()+"客户条码\n"+ getCustomerBarCode()+"\n第一次治疗条码\n"+
-                getStep1Barcode()+"\n第二次治疗条码\n"+ getStep2Barcode()+"\n第三次治疗条码\n"+
-                getStep3Barcode()+ "\n第四次治疗条码\n" +getStep4Barcode()+"\n第五次治疗条码\n"+
-                getStep5Barcode()+"\n第六次治疗条码\n" + getStep6Barcode();
-        return res;
-    }
+		String res = getTreatmentInfo() + "客户条码\n" + getCustomerBarCode() + "\n第一次治疗条码\n" +
+				getStep1Barcode() + "\n第二次治疗条码\n" + getStep2Barcode() + "\n第三次治疗条码\n" +
+				getStep3Barcode() + "\n第四次治疗条码\n" + getStep4Barcode() + "\n第五次治疗条码\n" +
+				getStep5Barcode() + "\n第六次治疗条码\n" + getStep6Barcode();
+		return res;
+	}
 
+	private String getBarcodeTitle() {
+		return mTreatmentInfo.getCustomerName() + " " + mTreatmentInfo.getCustomerSex() + " " + mTreatmentInfo.getHospital();
+	}
 }

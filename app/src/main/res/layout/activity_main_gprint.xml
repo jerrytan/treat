@@ -17,7 +17,7 @@
         android:layout_marginTop="40dp"
         android:layout_gravity="center"
         android:onClick="openPortDialogueClicked"
-        android:text="@string/printer_connect_setting" />
+        android:text="@string/printer_connect" />
     <Button 
         android:id="@+id/btPrintTestPage"
         android:layout_width="300dp"
@@ -65,11 +65,20 @@
         android:text="Print receipt"
         android:onClick="printReceiptClicked"
         />
-       <ImageView
+
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/printer_beep"
+        android:id="@+id/switchBeep" />
+
+    <ImageView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_gravity="center"
-           android:layout_marginTop="50dp"
+           android:layout_marginTop="10dp"
            android:src="@drawable/gprinter2120"/>
        <Button 
         android:id="@+id/btPrintLabel"

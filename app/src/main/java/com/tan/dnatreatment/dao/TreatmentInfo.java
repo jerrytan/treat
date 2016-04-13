@@ -21,7 +21,7 @@ public class TreatmentInfo {
         this.employee_id = employee_id;
     }
 
-    public String getEmployee_name() {
+    public String getEmployeeName() {
         return employee_name;
     }
 
@@ -29,7 +29,7 @@ public class TreatmentInfo {
         this.employee_name = employee_name;
     }
 
-    public String getEmployee_phone() {
+    public String getEmployeePhone() {
         return employee_phone;
     }
 
@@ -89,10 +89,30 @@ public class TreatmentInfo {
     private String customer_id;
     private String customer_name;
     private String customer_phone;
+    private String hospital;
+
+    public String getCustomerSex() {
+        return customer_sex;
+    }
+
+    public void setCustomer_sex(String customer_sex) {
+        this.customer_sex = customer_sex;
+    }
+
+    private String customer_sex;
+
+    public String getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(String hospital) {
+        this.hospital = hospital;
+    }
+
 
     public TreatmentInfo(String id, String employee_id, String employee_name, String employee_phone,
                          String start_date, String end_date,
-                         String customer_id,String customer_name, String customer_phone) {
+                         String customer_id,String customer_name, String customer_phone,String customer_sex, String hospital) {
         this.id = id;
         this.employee_id = employee_id;
         this.employee_name = employee_name;
@@ -102,5 +122,7 @@ public class TreatmentInfo {
         this.customer_id = customer_id;
         this.customer_name = customer_name;
         this.customer_phone = customer_phone;
+        this.customer_sex = customer_sex;
+        this.hospital = hospital;
     }
 }

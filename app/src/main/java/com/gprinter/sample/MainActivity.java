@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.os.RemoteException;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.gprinter.aidl.GpService;
@@ -74,6 +77,17 @@ public class MainActivity extends Activity {
 		Log.e(DEBUG_TAG, "onCreate");
 	//	startService();
 		connection();
+
+		Switch switchBeep = (Switch)findViewById(R.id.switchBeep);
+		switchBeep.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				SharedPreferences prefs = getSharedPreferences("",0);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean("printerbeep", isChecked);
+                editor.commit();
+			}
+		});
 	}
 	private void connection() {
 		conn = new PrinterServiceConnection();

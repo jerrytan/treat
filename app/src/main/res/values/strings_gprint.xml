@@ -24,9 +24,9 @@
     <string name="gprinter003">Printer 003</string>
 	<string name="gprinter004">Printer 004</string>
 	<string name="gprinter005">Printer 005</string>
-    <string name="disconnect">disconnect</string>
-    <string name="cut">disconn</string>
-    <string name="cutting">断开</string>
+    <string name="disconnect">断开</string>
+    <string name="cut">断开</string>
+    <string name="cutting">断开中</string>
     <string name="connect">连接</string>
      <string name="connected">已连接</string>
     <string name="connecting">连接中</string>

@@ -80,8 +80,7 @@ public class EditCustomerActivity extends AppCompatActivity {
         mCustomerComment= (EditText)findViewById(R.id.add_customer_comment);
 
         CustomerInfo customerInfo = (CustomerInfo)getIntent().getSerializableExtra("Customer");
-        if(mCustomerInfo != customerInfo) Log.e("Customer","CustomerInfo passed incorrectly");
-        mCustomerSex = "male";
+        mCustomerSex = "男";
 
         mCustomerSexGroup = (RadioGroup)findViewById(R.id.add_customer_sex);
         mCustomerSexGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -100,7 +99,7 @@ public class EditCustomerActivity extends AppCompatActivity {
             mCustomerPhone.setText(mCustomerInfo.getPhone());
             mCustomerAddress.setText(mCustomerInfo.getAddress());
             mCustomerComment.setText(mCustomerInfo.getComment());
-            if(mCustomerInfo.getSex().equals("male")) {
+            if(mCustomerInfo.getSex().equals("男")) {
                 ((RadioButton)mCustomerSexGroup.getChildAt(0)).setChecked(true);
                 ((RadioButton)mCustomerSexGroup.getChildAt(1)).setChecked(false);
             }
@@ -147,7 +146,7 @@ public class EditCustomerActivity extends AppCompatActivity {
                                 builder.append("&age=");
                                 builder.append(customerAge);
                                 builder.append("&sex=");
-                                builder.append(mCustomerSex);
+                                builder.append(URLEncoder.encode(mCustomerSex, "UTF-8"));
                                 builder.append("&address=");
                                 builder.append(URLEncoder.encode(customerAddress, "UTF-8"));
                                 builder.append("&eid=");

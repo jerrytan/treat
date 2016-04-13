@@ -90,8 +90,8 @@ tools:context="com.tan.dnatreatment.MainActivity">
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/main_setting"
-            android:text="@string/main_setting"/>
+            android:id="@+id/main_printer_setting"
+            android:text="@string/main_printer_setting"/>
 
     </LinearLayout>
 </LinearLayout>
